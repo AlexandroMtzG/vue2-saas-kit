@@ -1,0 +1,93 @@
+<template>
+  <div>
+    <Loading v-if="loading" />
+    <div v-else>
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <div class="flex items-center justify-start w-full">
+            <div class="relative flex items-center w-full">
+              <div
+                class="focus-within:z-10 absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <input
+                ref="inputSearch"
+                type="text"
+                name="buscador"
+                id="buscador"
+                class="w-full focus:ring-theme-500 focus:border-theme-500 block rounded-md pl-10 sm:text-sm border-gray-300"
+                :placeholder="$t('shared.searchDot')"
+                v-model="searchInput"
+              />
+            </div>
+          </div>
+        </div>
+        <ProvidersListAndTable :items="filteredItems" />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from "vue";
+import Component from "vue-class-component";
+import services from "@/services";
+import ProvidersListAndTable from "./ProvidersListAndTable.vue";
+import { LinkDto } from "@/application/dtos/core/links/LinkDto";
+import Loading from "@/components/ui/loaders/Loading.vue";
+
+@Component({
+  components: {
+    ProvidersListAndTable,
+    Loading
+  }
+})
+export default class ProvidersList extends Vue {
+  loading = false;
+  searchInput = "";
+  items: LinkDto[] = [];
+
+  mounted() {
+    this.reload();
+  }
+  reload() {
+    this.items = [];
+    this.loading = true;
+    services.links
+      .getAllProviders()
+      .then(response => {
+        this.items = response;
+      })
+      .finally(() => {
+        this.loading = false;
+      });
+  }
+  get filteredItems(): LinkDto[] {
+    if (!this.items) {
+      return [];
+    }
+    const items = this.items.filter(
+      f =>
+        f.id?.toUpperCase().includes(this.searchInput.toUpperCase()) ||
+        f.providerWorkspace.name
+          ?.toString()
+          .toUpperCase()
+          .includes(this.searchInput.toUpperCase())
+    );
+
+    return items;
+  }
+}
+</script>
