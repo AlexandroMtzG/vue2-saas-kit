@@ -1,6 +1,6 @@
 ## vue2-saas-kit
 
-Vue2 SaaS template, TypeScript, Tailwind CSS, Modular persisted store, Meta-tags, i18n, Front pages
+Vue2 SaaS template, TypeScript, Tailwind CSS, Modular persisted store, Meta-tags, i18n, Front/Auth/Admin/App pages
 
 ![Vue2 Codebase](https://yahooder.sirv.com/saasfrontends/oss/vue.png)
 
